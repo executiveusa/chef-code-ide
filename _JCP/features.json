@@ -1,0 +1,235 @@
+{
+  "project": "NANNY",
+  "version": "0.1.0",
+  "base": "chef-code-ide",
+  "updated": "2026-05-24",
+  "features": [
+    {
+      "id": "F-001",
+      "name": "White-Label Brand System",
+      "description": "Configurable brand identity for ghost kitchens and restaurants",
+      "status": "in-progress",
+      "acceptance": [
+        "Brand config loads without errors",
+        "Avatar, colors, fonts, and copy are all swappable",
+        "Default brand is Nanny with chef.svg avatar",
+        "TypeScript types are strict and exported"
+      ],
+      "test_steps": [
+        "Import brand from app/lib/nanny/brand.ts",
+        "Call getNannyBrand() and verify default values",
+        "Call buildBrand({ name: 'Test' }) and verify override",
+        "Verify no secrets in brand config"
+      ],
+      "evidence": [],
+      "files": ["app/lib/nanny/brand.ts"]
+    },
+    {
+      "id": "F-002",
+      "name": "Backend-for-Agents API Layer",
+      "description": "Clean frontend/backend boundary with webhook and agent routes",
+      "status": "in-progress",
+      "acceptance": [
+        "GET /api/nanny/health returns {status: ok}",
+        "POST /api/nanny/webhook accepts events",
+        "All secrets stay server-side only",
+        "Mock responses work without real API keys"
+      ],
+      "test_steps": [
+        "curl GET /api/nanny/health",
+        "POST /api/nanny/webhook with sample event",
+        "Verify no VITE_ secrets in route files",
+        "Verify mock mode returns structured data"
+      ],
+      "evidence": [],
+      "files": [
+        "app/routes/api.nanny.health.ts",
+        "app/routes/api.nanny.webhook.ts",
+        "app/routes/api.nanny.menu.create.ts",
+        "app/routes/api.nanny.event.plan.ts",
+        "app/routes/api.nanny.service.runbook.ts",
+        "app/routes/api.nanny.voice.transcript.ts",
+        "app/routes/api.nanny.vision.analyze.ts",
+        "app/routes/api.nanny.creative.brief.ts",
+        "app/routes/api.nanny.llm.route.ts"
+      ]
+    },
+    {
+      "id": "F-003",
+      "name": "LLM Router",
+      "description": "Task-aware model routing with token telemetry",
+      "status": "in-progress",
+      "acceptance": [
+        "Router selects model based on task type",
+        "Returns model, tokens, cost, latency",
+        "No hardcoded provider secrets",
+        "Mock mode returns realistic telemetry"
+      ],
+      "test_steps": [
+        "Call routeTask({ type: 'menu-generation' })",
+        "Verify telemetry object has all required fields",
+        "Test each task type routes to expected model tier",
+        "Verify provider is swappable via config"
+      ],
+      "evidence": [],
+      "files": ["app/lib/nanny/llm-router.ts", "app/lib/.server/nanny/router.ts"]
+    },
+    {
+      "id": "F-004",
+      "name": "Intake Module",
+      "description": "Guest count, event type, dietary needs, budget, timeline capture",
+      "status": "in-progress",
+      "acceptance": [
+        "Intake form validates all required fields",
+        "Dietary needs and allergies captured",
+        "Budget and timeline stored",
+        "Output feeds into menu and provisioning"
+      ],
+      "test_steps": [
+        "Submit intake with all fields",
+        "Submit with missing required fields and verify errors",
+        "Verify output is typed correctly"
+      ],
+      "evidence": [],
+      "files": ["app/lib/nanny/modules/intake.ts"]
+    },
+    {
+      "id": "F-005",
+      "name": "Menu Studio",
+      "description": "Vegan Afro-Caribbean menu generation and soul-food remixing",
+      "status": "in-progress",
+      "acceptance": [
+        "Mock menu generation returns structured menu",
+        "Menus include allergen and nutrition notes",
+        "Plant-based substitutions offered",
+        "Plating guidance included"
+      ],
+      "test_steps": [
+        "POST /api/nanny/menu/create with intake data",
+        "Verify response has courses, dishes, allergens",
+        "Test vegan remix of a soul-food dish"
+      ],
+      "evidence": [],
+      "files": ["app/lib/nanny/modules/menu-studio.ts"]
+    },
+    {
+      "id": "F-006",
+      "name": "Provisioning Module",
+      "description": "Shopping lists, vendor grouping, substitutions, quantity estimates",
+      "status": "in-progress",
+      "acceptance": [
+        "Provisioning list generated from menu",
+        "Items grouped by vendor category",
+        "Quantities scaled to guest count",
+        "Budget estimate included"
+      ],
+      "test_steps": [
+        "Pass menu to provisioning module",
+        "Verify grouped shopping list returned",
+        "Verify budget estimate present"
+      ],
+      "evidence": [],
+      "files": ["app/lib/nanny/modules/provisioning.ts"]
+    },
+    {
+      "id": "F-007",
+      "name": "Service Mode",
+      "description": "Prep schedule, run of show, plating timing, staff checklist",
+      "status": "in-progress",
+      "acceptance": [
+        "Service runbook generates from event data",
+        "Timeline is sequenced and realistic",
+        "Contingency plan included",
+        "Screen renders on mobile"
+      ],
+      "test_steps": [
+        "POST /api/nanny/service/runbook",
+        "Verify runbook has prep, service, and cleanup phases",
+        "Check mobile layout renders without overflow"
+      ],
+      "evidence": [],
+      "files": ["app/lib/nanny/modules/service-mode.ts", "app/components/nanny/NannyServiceMode.tsx"]
+    },
+    {
+      "id": "F-008",
+      "name": "Creative Studio",
+      "description": "Menu PDFs, flyers, social posts, brand copy, landing pages",
+      "status": "in-progress",
+      "acceptance": [
+        "Creative brief generates structured output",
+        "Copy is on-brand for Afro-Caribbean plant-based hospitality",
+        "No generic SaaS copy"
+      ],
+      "test_steps": [
+        "POST /api/nanny/creative/brief",
+        "Verify brief contains platform-specific copy",
+        "Check copy reflects brand voice"
+      ],
+      "evidence": [],
+      "files": ["app/lib/nanny/modules/creative-studio.ts"]
+    },
+    {
+      "id": "F-009",
+      "name": "Voice Console",
+      "description": "Mobile-first voice input shell with transcript review",
+      "status": "in-progress",
+      "acceptance": [
+        "Voice input UI renders on mobile",
+        "Transcript review confirms before dispatch",
+        "Mock transcript processing works"
+      ],
+      "test_steps": [
+        "Render NannyVoiceConsole on mobile viewport",
+        "POST /api/nanny/voice/transcript with text",
+        "Verify structured command returned"
+      ],
+      "evidence": [],
+      "files": ["app/lib/nanny/modules/voice-console.ts", "app/components/nanny/NannyVoiceConsole.tsx"]
+    },
+    {
+      "id": "F-010",
+      "name": "Vision Console",
+      "description": "Upload menu/photo/document, extract structured data",
+      "status": "in-progress",
+      "acceptance": [
+        "File upload accepted",
+        "Mock vision analysis returns structured data",
+        "Output converts to recipe or runbook format"
+      ],
+      "test_steps": ["POST /api/nanny/vision/analyze with mock image", "Verify structured extraction returned"],
+      "evidence": [],
+      "files": ["app/lib/nanny/modules/vision-console.ts"]
+    },
+    {
+      "id": "F-011",
+      "name": "Premium Frontend / Nanny Homepage",
+      "description": "Apple-like, mobile-first, plant-based luxury UI",
+      "status": "in-progress",
+      "acceptance": [
+        "Homepage answers: what, who, what first, why premium, how to start",
+        "Primary CTA 'Plan Service' visible immediately",
+        "No generic SaaS gradients",
+        "Chef avatar appears as brand mascot",
+        "Mobile layout works at 375px"
+      ],
+      "test_steps": ["Open /nanny in browser", "Check CTA visible above fold on mobile", "Run typecheck and lint"],
+      "evidence": [],
+      "files": [
+        "app/routes/nanny._index.tsx",
+        "app/components/nanny/NannyHomepage.tsx",
+        "app/components/nanny/NannyAvatar.tsx",
+        "app/components/nanny/NannyTokenTelemetry.tsx"
+      ]
+    },
+    {
+      "id": "F-012",
+      "name": "Admin / White Label Settings",
+      "description": "Brand settings, avatar swap, module toggles, provider settings",
+      "status": "planned",
+      "acceptance": ["Admin page renders", "Brand config can be updated", "Avatar swappable"],
+      "test_steps": ["Open /nanny/admin", "Update brand name and verify change"],
+      "evidence": [],
+      "files": ["app/routes/nanny.admin.tsx"]
+    }
+  ]
+}
