@@ -1,0 +1,71 @@
+project: nanny
+version: 0.1.0
+base_repo: executiveusa/chef-code-ide
+branch: claude/nanny-chef-ide-builder-3PMEb
+
+prd_dir: ./prd
+features_file: ./_JCP/features.json
+progress_file: ./_JCP/progress.md
+recovery_file: ./_JCP/recovery.md
+
+parallel:
+  max_parallel: 3
+  safe_parallel:
+    - ui-copy
+    - docs
+    - recipe-seed-data
+    - mock-adapters
+    - test-fixtures
+    - brand-templates
+  no_parallel:
+    - schema-migrations
+    - agent-runtime-wiring
+    - llm-router-core
+    - prompt-assembly
+    - shared-type-definitions
+
+commands:
+  install: pnpm install
+  typecheck: pnpm typecheck
+  lint: pnpm lint
+  test: pnpm test
+  build: pnpm build
+  dev: pnpm dev
+
+phases:
+  - id: 0
+    name: patch-audit
+    prd: prd/00-foundation.md
+    status: complete
+  - id: 1
+    name: foundation-hardening
+    prd: prd/00-foundation.md
+    status: in-progress
+  - id: 2
+    name: brand-system
+    prd: prd/01-brand-system.md
+    status: in-progress
+  - id: 3
+    name: agent-backend
+    prd: prd/02-agent-backend.md
+    status: in-progress
+  - id: 4
+    name: llm-router
+    prd: prd/03-llm-router.md
+    status: in-progress
+  - id: 5
+    name: nanny-modules
+    prd: prd/04-nanny-modules.md
+    status: in-progress
+  - id: 6
+    name: premium-frontend
+    prd: prd/05-premium-frontend.md
+    status: in-progress
+  - id: 7
+    name: voice-vision
+    prd: prd/06-voice-vision.md
+    status: planned
+  - id: 8
+    name: tests-deploy
+    prd: prd/07-tests-deploy.md
+    status: planned
