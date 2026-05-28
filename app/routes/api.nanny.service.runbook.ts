@@ -1,6 +1,7 @@
 import { json, type ActionFunctionArgs } from '@vercel/remix';
 import { validateIntake, mockIntake, type IntakeForm } from '~/lib/nanny/modules/intake';
 import { generateMockRunbook } from '~/lib/nanny/modules/service-mode';
+import { runNannyRouter, getNannyMockMode } from '~/lib/.server/nanny/router';
 import { buildMockTelemetry } from '~/lib/nanny/llm-router';
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -15,21 +16,42 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const useMock = Object.keys(body).length === 0 || globalThis.process.env.NANNY_MOCK_MODE !== 'false';
-  let intake: IntakeForm;
+  const isMockBody = Object.keys(body).length === 0;
+  const intake = isMockBody
+    ? mockIntake()
+    : ((): IntakeForm => {
+        const result = validateIntake(body);
+        if (!result.valid) {
+          return mockIntake();
+        }
+        return result.data!;
+      })();
 
-  if (useMock) {
-    intake = mockIntake();
-  } else {
-    const result = validateIntake(body);
-    if (!result.valid) {
-      return json({ error: 'Validation failed', details: result.errors }, { status: 400 });
-    }
-    intake = result.data!;
+  if (getNannyMockMode()) {
+    return json({
+      runbook: generateMockRunbook(intake),
+      intake,
+      telemetry: buildMockTelemetry('event-planning'),
+      mockMode: true,
+    });
   }
 
-  const runbook = generateMockRunbook(intake);
-  const telemetry = buildMockTelemetry('event-planning');
+  const prompt = `Create a detailed service runbook for:
+Event: ${intake.eventType}, ${intake.guestCount} guests
+Service: ${intake.serviceStartTime} — ${intake.serviceEndTime}
+Location: ${intake.location}
 
-  return json({ runbook, intake, telemetry, mockMode: useMock });
+Return JSON with: prepPhases (array of {phase, startTime, duration, tasks: string[], assignee}), servicePhases (same), cleanupPhases (same), contingencies (array of {risk, mitigation}), staffChecklist (string[]).
+JSON only.`;
+
+  const { text, telemetry } = await runNannyRouter({ taskType: 'event-planning', prompt });
+
+  let runbook: unknown;
+  try {
+    runbook = JSON.parse(text);
+  } catch {
+    runbook = generateMockRunbook(intake);
+  }
+
+  return json({ runbook, intake, telemetry, mockMode: false });
 };

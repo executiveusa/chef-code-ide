@@ -164,6 +164,13 @@ export const Menu = memo(({ isOpen, onClose }: MenuProps) => {
 
         <div className="flex size-full flex-1 flex-col overflow-hidden">
           <div className="space-y-3 p-4">
+            <a
+              href="/nanny"
+              className="flex w-full items-center gap-2 rounded-lg bg-[#2D5016] px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#3d6b1e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CB342]"
+            >
+              <img src="/chef.svg" alt="Nanny" width={20} height={20} className="shrink-0 brightness-0 invert" />
+              Nanny — Plan Service
+            </a>
             <Button className="w-fit" href="/" icon={<PlusIcon />}>
               Start new project
             </Button>

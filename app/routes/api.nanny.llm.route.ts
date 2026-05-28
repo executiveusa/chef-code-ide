@@ -7,9 +7,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  let body: { taskType?: TaskType };
+  let body: { taskType?: TaskType; prompt?: string };
   try {
-    body = (await request.json()) as { taskType?: TaskType };
+    body = (await request.json()) as { taskType?: TaskType; prompt?: string };
   } catch {
     return json({ error: 'Invalid JSON body' }, { status: 400 });
   }
@@ -18,6 +18,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ error: 'taskType is required' }, { status: 400 });
   }
 
-  const result = await runNannyRouter({ taskType: body.taskType });
+  const result = await runNannyRouter({
+    taskType: body.taskType,
+    prompt: body.prompt ?? `Route this ${body.taskType} task`,
+  });
   return json(result);
 };

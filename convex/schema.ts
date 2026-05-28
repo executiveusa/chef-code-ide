@@ -240,4 +240,37 @@ export default defineSchema({
   })
     .index("name", ["name"])
     .index("isDone", ["isDone"]),
+
+  // Nanny: saved menus
+  nannyMenus: defineTable({
+    sessionId: v.string(),
+    title: v.string(),
+    eventType: v.string(),
+    guestCount: v.number(),
+    menuJson: v.string(),
+    mockMode: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("bySession", ["sessionId"])
+    .index("byCreatedAt", ["createdAt"]),
+
+  // Nanny: saved event plans
+  nannyEvents: defineTable({
+    sessionId: v.string(),
+    title: v.string(),
+    eventType: v.string(),
+    guestCount: v.number(),
+    planJson: v.string(),
+    mockMode: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("bySession", ["sessionId"])
+    .index("byCreatedAt", ["createdAt"]),
+
+  // Nanny: white-label brand overrides per session/team
+  nannyBrandConfig: defineTable({
+    sessionId: v.string(),
+    configJson: v.string(),
+    updatedAt: v.number(),
+  }).index("bySession", ["sessionId"]),
 });
