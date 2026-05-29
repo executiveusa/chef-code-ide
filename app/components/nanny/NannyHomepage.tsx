@@ -177,6 +177,28 @@ export function NannyHomepage({ brand = DEFAULT_BRAND }: NannyHomepageProps) {
         </div>
       </section>
 
+      {/* Quick access */}
+      <section className="mx-auto max-w-lg px-6 pb-4">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Quick Access</p>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { href: '/nanny/voice', icon: '🎙️', label: 'Voice Console' },
+            { href: '/nanny/creative', icon: '🎨', label: 'Creative Studio' },
+            { href: '/nanny/service', icon: '📋', label: 'Service Mode' },
+            { href: '/nanny/admin', icon: '⚙️', label: 'Brand Admin' },
+          ].map(({ href, icon, label }) => (
+            <a
+              key={href}
+              href={href}
+              className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:border-gray-300 hover:text-gray-900"
+            >
+              <span>{icon}</span>
+              {label}
+            </a>
+          ))}
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-gray-200 px-6 py-8 text-center text-xs text-gray-400">
         <div className="mb-3 flex justify-center">

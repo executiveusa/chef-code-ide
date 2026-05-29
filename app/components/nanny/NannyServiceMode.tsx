@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ServiceRunbook, ServiceTask } from '~/lib/nanny/modules/service-mode';
+import { generateMockRunbook } from '~/lib/nanny/modules/service-mode';
+import { mockIntake } from '~/lib/nanny/modules/intake';
+import type { NannyBrand } from '~/lib/nanny/brand';
+import { DEFAULT_BRAND } from '~/lib/nanny/brand';
 import { NannyAvatar } from './NannyAvatar';
 
 interface NannyServiceModeProps {
-  runbook: ServiceRunbook;
+  runbook?: ServiceRunbook;
+  brand?: NannyBrand;
 }
 
 const PHASE_COLORS: Record<ServiceTask['phase'], string> = {
@@ -18,11 +23,22 @@ const PHASE_LABELS: Record<ServiceTask['phase'], string> = {
   cleanup: 'Cleanup',
 };
 
-export function NannyServiceMode({ runbook }: NannyServiceModeProps) {
+export function NannyServiceMode({ runbook: runbookProp, brand: _brand = DEFAULT_BRAND }: NannyServiceModeProps) {
+  const [runbook, setRunbook] = useState<ServiceRunbook | null>(runbookProp ?? null);
   const [activePhase, setActivePhase] = useState<ServiceTask['phase'] | 'all'>('all');
   const [completedTasks, setCompletedTasks] = useState<Set<number>>(new Set());
 
+  useEffect(() => {
+    if (!runbook) {
+      setRunbook(generateMockRunbook(mockIntake()));
+    }
+  }, [runbook]);
+
   const phases: Array<ServiceTask['phase'] | 'all'> = ['all', 'prep', 'service', 'cleanup'];
+
+  if (!runbook) {
+    return <div className="flex min-h-[400px] items-center justify-center text-gray-400">Loading service runbook…</div>;
+  }
 
   const filtered = activePhase === 'all' ? runbook.timeline : runbook.timeline.filter((t) => t.phase === activePhase);
 
@@ -40,7 +56,7 @@ export function NannyServiceMode({ runbook }: NannyServiceModeProps) {
 
   const totalTasks = runbook.timeline.length;
   const doneCount = completedTasks.size;
-  const progress = Math.round((doneCount / totalTasks) * 100);
+  const progress = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-[#FAFAF7] font-sans">

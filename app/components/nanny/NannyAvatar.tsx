@@ -3,7 +3,7 @@ import type { NannyBrand } from '~/lib/nanny/brand';
 interface NannyAvatarProps {
   brand?: Pick<NannyBrand, 'avatar' | 'name'>;
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  status?: 'idle' | 'thinking' | 'service';
+  status?: 'idle' | 'thinking' | 'service' | 'listening';
   className?: string;
 }
 
@@ -18,6 +18,7 @@ const STATUS_RING: Record<string, string> = {
   idle: '',
   thinking: 'ring-2 ring-amber-400 ring-offset-2 animate-pulse',
   service: 'ring-2 ring-emerald-500 ring-offset-2',
+  listening: 'ring-4 ring-red-400 ring-offset-2 animate-pulse',
 };
 
 export function NannyAvatar({ brand, size = 'md', status = 'idle', className = '' }: NannyAvatarProps) {
