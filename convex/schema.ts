@@ -273,4 +273,55 @@ export default defineSchema({
     configJson: v.string(),
     updatedAt: v.number(),
   }).index("bySession", ["sessionId"]),
+
+  // Nanny: multi-tenant organizations
+  nannyOrganizations: defineTable({
+    slug: v.string(),
+    name: v.string(),
+    restaurantType: v.union(
+      v.literal("ghost-kitchen"),
+      v.literal("private-chef"),
+      v.literal("catering"),
+      v.literal("pop-up"),
+      v.literal("estate"),
+    ),
+    brandConfigJson: v.string(),
+    ownerId: v.string(),
+    memberIds: v.array(v.string()),
+    plan: v.union(v.literal("free"), v.literal("starter"), v.literal("pro"), v.literal("white-label")),
+    createdAt: v.number(),
+    trialEndsAt: v.optional(v.number()),
+  })
+    .index("bySlug", ["slug"])
+    .index("byOwner", ["ownerId"]),
+
+  // Nanny: onboarding wizard state
+  nannyOnboarding: defineTable({
+    sessionId: v.string(),
+    orgId: v.optional(v.id("nannyOrganizations")),
+    step: v.number(),
+    completed: v.boolean(),
+    kitchenName: v.optional(v.string()),
+    restaurantType: v.optional(v.string()),
+    cuisineFocus: v.optional(v.array(v.string())),
+    teamSize: v.optional(v.string()),
+    firstEventDate: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("bySession", ["sessionId"]),
+
+  // Nanny: Stripe billing subscriptions
+  nannySubscriptions: defineTable({
+    sessionId: v.string(),
+    memberId: v.optional(v.string()),
+    stripeCustomerId: v.optional(v.string()),
+    stripeSubscriptionId: v.optional(v.string()),
+    plan: v.union(v.literal("free"), v.literal("starter"), v.literal("pro"), v.literal("white-label")),
+    status: v.union(v.literal("active"), v.literal("canceled"), v.literal("past_due"), v.literal("trialing")),
+    trialEndsAt: v.optional(v.number()),
+    currentPeriodEnd: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("bySession", ["sessionId"])
+    .index("byStripeCustomer", ["stripeCustomerId"])
+    .index("byStripeSubscription", ["stripeSubscriptionId"]),
 });

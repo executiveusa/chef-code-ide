@@ -1,0 +1,19 @@
+{
+  "name": "Nanny — Plant-Based Hospitality OS",
+  "short_name": "Nanny",
+  "description": "Premium plant-based hospitality intelligence for ghost kitchens and private chefs",
+  "start_url": "/nanny",
+  "display": "standalone",
+  "background_color": "#FAFAF7",
+  "theme_color": "#2D5016",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "shortcuts": [
+    { "name": "Plan Service", "url": "/nanny/service", "description": "Generate service runbook" },
+    { "name": "Creative Studio", "url": "/nanny/creative", "description": "Generate creative assets" },
+    { "name": "Voice Console", "url": "/nanny/voice", "description": "Voice-activated dispatch" }
+  ]
+}

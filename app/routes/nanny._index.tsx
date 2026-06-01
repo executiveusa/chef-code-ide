@@ -8,20 +8,29 @@ import { NannyHomepage } from '~/components/nanny/NannyHomepage';
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const name = data?.brand.name ?? 'Nanny';
   const tagline = data?.brand.tagline ?? 'Premium Plant-Based Hospitality Intelligence';
-  return [{ title: `${name} | ${tagline}` }, { name: 'description', content: tagline }];
+  return [
+    { title: `${name} | ${tagline}` },
+    { name: 'description', content: tagline },
+    { name: 'apple-mobile-web-app-capable', content: 'yes' },
+    { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+    { name: 'apple-mobile-web-app-title', content: name },
+    { name: 'theme-color', content: '#2D5016' },
+  ];
 };
 
-export const loader = async (_args: LoaderFunctionArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url);
+  const demoMode = url.searchParams.get('demo') === '1';
   const brand = getNannyBrand(globalThis.process.env.NANNY_BRAND_CONFIG);
-  return json({ brand });
+  return json({ brand, demoMode });
 };
 
 export default function NannyRoute() {
-  const { brand } = useLoaderData<typeof loader>();
+  const { brand, demoMode } = useLoaderData<typeof loader>();
 
   return (
     <ClientOnly fallback={<NannyLoadingShell brand={brand} />}>
-      {() => <NannyHomepage brand={brand as NannyBrand} />}
+      {() => <NannyHomepage brand={brand as NannyBrand} demoMode={demoMode} />}
     </ClientOnly>
   );
 }
