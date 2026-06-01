@@ -324,4 +324,45 @@ export default defineSchema({
     .index("bySession", ["sessionId"])
     .index("byStripeCustomer", ["stripeCustomerId"])
     .index("byStripeSubscription", ["stripeSubscriptionId"]),
+
+  // Nanny: background agent job queue (durable, retryable)
+  nannyAgentJobs: defineTable({
+    sessionId: v.string(),
+    jobType: v.string(),
+    payload: v.any(),
+    status: v.union(v.literal("pending"), v.literal("running"), v.literal("done"), v.literal("dead")),
+    scheduledFor: v.number(),
+    attempts: v.number(),
+    result: v.optional(v.any()),
+    lastError: v.optional(v.string()),
+    completedAt: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("byStatus", ["status"])
+    .index("bySession", ["sessionId"]),
+
+  // Nanny: recipe library (durable content storage)
+  nannyRecipes: defineTable({
+    sessionId: v.string(),
+    title: v.string(),
+    category: v.string(),
+    content: v.string(),
+    pinterestDescription: v.optional(v.string()),
+    instagramCaption: v.optional(v.string()),
+    hashtags: v.optional(v.array(v.string())),
+    publishedAt: v.optional(v.number()),
+    createdAt: v.number(),
+  }).index("bySession", ["sessionId"]),
+
+  // Nanny: social media post queue (30-day calendar)
+  nannySocialPosts: defineTable({
+    sessionId: v.string(),
+    platform: v.string(),
+    caption: v.string(),
+    imageDescription: v.optional(v.string()),
+    hashtags: v.array(v.string()),
+    scheduledFor: v.optional(v.number()),
+    status: v.union(v.literal("draft"), v.literal("scheduled"), v.literal("posted")),
+    createdAt: v.number(),
+  }).index("bySession", ["sessionId"]),
 });
