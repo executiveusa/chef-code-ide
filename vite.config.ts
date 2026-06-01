@@ -61,6 +61,12 @@ export default defineConfig((config) => {
         output: {
           format: 'esm',
         },
+        // @vercel/remix has a "browser" export condition that maps to dist/edge/index.js,
+        // which imports entry.server.js — triggering Remix's server-only module check
+        // during the client build. Mark it external so the client bundler never resolves
+        // it through the browser condition. Remix tree-shakes server utilities (json,
+        // redirect, etc.) from client bundles, so this causes no runtime regression.
+        external: (id) => id === '@vercel/remix' || id.startsWith('@vercel/remix/'),
       },
       commonjsOptions: {
         transformMixedEsModules: true,
