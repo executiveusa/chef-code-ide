@@ -58,17 +58,6 @@ Load skills lazily from `.claude/skills/`:
 - `GRAPHIFY.md` — codebase orientation
 - `JCODEMUNCH-TOKEN-PROTOCOL.md` — token savings
 
-### Hospitality Domain Skills
-
-- `catering/SKILL.md` — event costing, staffing ratios, service timelines
-- `danny-meyer/SKILL.md` — Enlightened Hospitality, 51% rule, service culture
-- `recipes/README.md` — recipe library format + folder structure
-
-### Go-To-Market Skills
-
-- `go-to-market/SOCIAL-PROMPTS.md` — ChatGPT prompts for 30-day social calendar + all image sizes
-- `go-to-market/PINTEREST-BLOG-PROMPT.md` — blog + Pinterest auto-post pipeline
-
 ## Commit Standard
 
 Every commit must pass typecheck + lint + test.
