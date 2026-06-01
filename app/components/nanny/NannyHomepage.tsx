@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { NannyBrand } from '~/lib/nanny/brand';
 import { DEFAULT_BRAND } from '~/lib/nanny/brand';
 import { NannyAvatar } from './NannyAvatar';
@@ -7,16 +7,19 @@ import { NannyTokenTelemetry } from './NannyTokenTelemetry';
 
 interface NannyHomepageProps {
   brand?: NannyBrand;
+  demoMode?: boolean;
 }
 
 type ActiveAction = 'menu' | 'provision' | 'service' | 'flyer' | null;
 
-export function NannyHomepage({ brand = DEFAULT_BRAND }: NannyHomepageProps) {
+export function NannyHomepage({ brand = DEFAULT_BRAND, demoMode = false }: NannyHomepageProps) {
   const [activeAction, setActiveAction] = useState<ActiveAction>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<unknown>(null);
   const [telemetry, setTelemetry] = useState<TokenTelemetry | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [demoBannerDismissed, setDemoBannerDismissed] = useState(false);
+  const dismissDemoBanner = useCallback(() => setDemoBannerDismissed(true), []);
 
   const primaryStyle = { backgroundColor: brand.primaryColor };
   const accentStyle = { color: brand.secondaryColor };
@@ -55,6 +58,24 @@ export function NannyHomepage({ brand = DEFAULT_BRAND }: NannyHomepageProps) {
 
   return (
     <div className="min-h-screen font-sans" style={{ backgroundColor: brand.backgroundColor }}>
+      {/* Demo Mode Banner */}
+      {demoMode && !demoBannerDismissed && (
+        <div
+          className="flex items-center justify-between px-4 py-3 text-sm font-medium text-white"
+          style={{ backgroundColor: '#2D5016' }}
+          role="banner"
+        >
+          <span>Demo Mode — No Login Required. Explore all features with mock data.</span>
+          <button
+            type="button"
+            onClick={dismissDemoBanner}
+            className="ml-4 rounded px-2 py-0.5 text-white/80 transition-colors hover:bg-white/20 hover:text-white"
+            aria-label="Dismiss demo banner"
+          >
+            ✕
+          </button>
+        </div>
+      )}
       {/* Hero */}
       <header className="px-6 pb-8 pt-12 text-center">
         <div className="mb-6 flex justify-center">
@@ -208,6 +229,23 @@ export function NannyHomepage({ brand = DEFAULT_BRAND }: NannyHomepageProps) {
           {brand.name} · {brand.cuisineFocus.join(' · ')}
         </p>
         <p className="mt-1">{brand.tagline}</p>
+        <div className="mt-4 flex items-center justify-center gap-5">
+          <a href="/nanny/pricing" className="transition-colors hover:text-[#2D5016]">
+            Pricing
+          </a>
+          <a href="/nanny/terms" className="transition-colors hover:text-[#2D5016]">
+            Terms
+          </a>
+          <a href="/nanny/privacy" className="transition-colors hover:text-[#2D5016]">
+            Privacy
+          </a>
+          <a href="/nanny?demo=1" className="transition-colors hover:text-[#2D5016]">
+            Demo
+          </a>
+          <a href="mailto:hello@nanny.kitchen" className="transition-colors hover:text-[#2D5016]">
+            Contact
+          </a>
+        </div>
       </footer>
     </div>
   );
